@@ -22,32 +22,40 @@ async function setupServer() {
   app.get('/contacts', async (req, res) => {
     const contacts = await getContacts();
     res.status(200).json({
+      status: 200,
       data: contacts,
       message: 'Successfully found contacts!',
     });
   });
 
-  app.get('/contacts/:contactId', async (req, res, next) => {
+  app.get('/contacts/:contactId', async (req, res) => {
     const { contactId } = req.params;
-    const student = await getContactById(contactId);
+    const contact = await getContactById(contactId);
 
-    if (!student)
+    if (!contact) {
       return res.status(404).json({
+        status: 404,
         message: 'Contact not found',
       });
+    }
 
     res.status(200).json({
-      data: student,
+      status: 200,
+      data: contact,
       message: `Successfully found contact with id ${contactId}!`,
     });
   });
 
   app.use((req, res) => {
-    res.status(404).json({ message: 'Not found' });
+    res.status(404).json({
+      status: 404,
+      message: 'Not found',
+    });
   });
 
-  app.use((err, req, res, next) => {
+  app.use((err, req, res) => {
     res.status(500).json({
+      status: 500,
       message: 'Something went wrong',
       error: err.message,
     });
@@ -59,29 +67,3 @@ async function setupServer() {
 }
 
 export default setupServer;
-
-// import express from 'express';
-
-// const app = express();
-
-// app.use((req, res, next) => {
-//   const { key } = req.query;
-
-//   if (key !== '12345') {
-//     return res.status(401).send({ message: 'Please provide API key' });
-//   }
-
-//   next();
-// });
-
-// app.get('/', (req, res) => {
-//   res.send('Hello world!');
-// });
-
-// app.post('/', (req, res) => {
-//   res.send('Post');
-// });
-
-// app.listen(8080, () => {
-//   console.log('Server started on port 8080');
-// });
