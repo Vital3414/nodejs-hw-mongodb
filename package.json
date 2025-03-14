@@ -23,6 +23,7 @@
     "express-pino-logger": "^7.0.0",
     "get-env-var": "^2.0.0",
     "http-errors": "^2.0.0",
+    "joi": "^17.13.3",
     "mogodb": "^0.0.1-security",
     "mongoose": "^8.11.0",
     "pino-pretty": "^13.0.0",
