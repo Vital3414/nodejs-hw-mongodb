@@ -9,6 +9,7 @@ import {
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
+import { createContactSchema } from '../validation/contacts.js';
 
 export const getContactsController = async (req, res, next) => {
   try {
@@ -57,15 +58,25 @@ export const getContactByIdController = async (req, res, next) => {
 
 export const createContactController = async (req, res, next) => {
   try {
+    await createContactSchema.validateAsync(req.body);
+
     const contact = await createContact(req.body);
 
-    res.json({
+    res.status(201).json({
       status: 201,
-      message: `Successfully created a contact!`,
+      message: 'Successfully created a contact!',
       data: contact,
     });
   } catch (error) {
     console.error('Error creating contact:', error);
+
+    if (error.isJoi) {
+      return res.status(400).json({
+        message: 'Validation error',
+        errors: error.details.map((detail) => detail.message),
+      });
+    }
+
     next(createHttpError(500, 'Failed to create contact', { cause: error }));
   }
 };
@@ -81,7 +92,7 @@ export const patchContactController = async (req, res, next) => {
 
     res.json({
       status: 200,
-      message: `Successfully patched a contact!`,
+      message: 'Successfully patched a contact!',
       data: updatedContact,
     });
   } catch (error) {
