@@ -9,7 +9,7 @@ export const createContactSchema = Joi.object({
   }),
   phoneNumber: Joi.string().min(3).max(20).required(),
   email: Joi.string(),
-  isFavorite: Joi.boolean(),
+  isFavourite: Joi.boolean(),
   contactType: Joi.string().valid('work', 'home', 'personal').required(),
 });
 
