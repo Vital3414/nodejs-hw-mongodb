@@ -77,7 +77,6 @@ export const createContactController = async (req, res, next) => {
 };
 
 export const patchContactController = async (req, res, next) => {
-  try {
     const { contactId } = req.params;
     const updatedContact = await updateContact(contactId, req.body);
 
@@ -90,14 +89,10 @@ export const patchContactController = async (req, res, next) => {
       message: 'Successfully patched a contact!',
       data: updatedContact,
     });
-  } catch (error) {
-    console.error('Error updating contact:', error);
-    next(createHttpError(500, 'Failed to update contact', { cause: error }));
-  }
+  } 
 };
 
 export const deleteContactController = async (req, res, next) => {
-  try {
     const { contactId } = req.params;
     const contact = await deleteContact(contactId);
 
@@ -106,8 +101,5 @@ export const deleteContactController = async (req, res, next) => {
     }
 
     res.status(204).send();
-  } catch (error) {
-    console.error('Error deleting contact:', error);
-    next(createHttpError(500, 'Failed to delete contact', { cause: error }));
-  }
+  } 
 };
