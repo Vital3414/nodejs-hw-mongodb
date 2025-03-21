@@ -29,7 +29,6 @@ export const getContactsController = async (req, res, next) => {
       message: 'Successfully found contacts!',
       data: contacts,
     });
-  } 
 };
 
 export const getContactByIdController = async (req, res) => {
@@ -57,14 +56,14 @@ export const createContactController = async (req, res, next) => {
       message: 'Successfully created a contact!',
       data: contact,
     });
-  } 
+  
 
     if (error.isJoi) {
       return res.status(400).json({
         message: 'Validation error',
         errors: error.details.map((detail) => detail.message),
       });
-    }
+    
 
     next(createHttpError(500, 'Failed to create contact', { cause: error }));
 
@@ -83,7 +82,7 @@ export const patchContactController = async (req, res, next) => {
       message: 'Successfully patched a contact!',
       data: updatedContact,
     });
-  } 
+   
 };
 
 export const deleteContactController = async (req, res, next) => {
@@ -95,5 +94,5 @@ export const deleteContactController = async (req, res, next) => {
     }
 
     res.status(204).send();
-  } 
+   
 };
