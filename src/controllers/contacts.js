@@ -12,7 +12,6 @@ import { parseFilterParams } from '../utils/parseFilterParams.js';
 import { createContactSchema } from '../validation/contacts.js';
 
 export const getContactsController = async (req, res, next) => {
-  try {
     const { page, perPage } = parsePaginationParams(req.query);
     const { sortBy, sortOrder } = parseSortParams(req.query);
     const filter = parseFilterParams(req.query);
@@ -30,10 +29,7 @@ export const getContactsController = async (req, res, next) => {
       message: 'Successfully found contacts!',
       data: contacts,
     });
-  } catch (error) {
-    console.error('Error fetching contacts:', error);
-    next(createHttpError(500, 'Failed to fetch contacts', { cause: error }));
-  }
+  } 
 };
 
 export const getContactByIdController = async (req, res) => {
@@ -52,7 +48,6 @@ export const getContactByIdController = async (req, res) => {
 };
 
 export const createContactController = async (req, res, next) => {
-  try {
     await createContactSchema.validateAsync(req.body);
 
     const contact = await createContact(req.body);
@@ -62,8 +57,7 @@ export const createContactController = async (req, res, next) => {
       message: 'Successfully created a contact!',
       data: contact,
     });
-  } catch (error) {
-    console.error('Error creating contact:', error);
+  } 
 
     if (error.isJoi) {
       return res.status(400).json({
@@ -73,7 +67,7 @@ export const createContactController = async (req, res, next) => {
     }
 
     next(createHttpError(500, 'Failed to create contact', { cause: error }));
-  }
+
 };
 
 export const patchContactController = async (req, res, next) => {
