@@ -9,12 +9,13 @@ export const getContacts = async ({
   sortOrder = SORT_ORDER.ASC,
   sortBy = '_id',
   filter = {},
+  userId,
 }) => {
   try {
     const limit = perPage;
     const skip = (page - 1) * perPage;
 
-    const contactQuery = ContactsCollection.find();
+    const contactQuery = ContactsCollection.find({ userId });
 
     if (filter.isFavourite) {
       contactQuery.where('isFavourite').equals(filter.isFavourite);

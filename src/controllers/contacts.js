@@ -9,31 +9,26 @@ import {
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
-import { createContactSchema } from '../validation/contacts.js';
 
-export const getContactsController = async (req, res, next) => {
-  try {
-    const { page, perPage } = parsePaginationParams(req.query);
-    const { sortBy, sortOrder } = parseSortParams(req.query);
-    const filter = parseFilterParams(req.query);
+export const getContactsController = async (req, res) => {
+  const { page, perPage } = parsePaginationParams(req.query);
+  const { sortBy, sortOrder } = parseSortParams(req.query);
+  const filter = parseFilterParams(req.query);
 
-    const contacts = await getContacts({
-      page,
-      perPage,
-      sortBy,
-      sortOrder,
-      filter,
-    });
+  const contacts = await getContacts({
+    page,
+    perPage,
+    sortBy,
+    sortOrder,
+    filter,
+    userId: req.user.id,
+  });
 
-    res.json({
-      status: 200,
-      message: 'Successfully found contacts!',
-      data: contacts,
-    });
-  } catch (error) {
-    console.error('Error fetching contacts:', error);
-    next(createHttpError(500, 'Failed to fetch contacts', { cause: error }));
-  }
+  res.json({
+    status: 200,
+    message: 'Successfully found contacts!',
+    data: contacts,
+  });
 };
 
 export const getContactByIdController = async (req, res) => {
@@ -44,6 +39,10 @@ export const getContactByIdController = async (req, res) => {
     throw createHttpError(404, 'Contact not found');
   }
 
+  if (contact.userId.toString() !== req.user.id.toString()) {
+    throw new createHttpError.Forbidden('Contact is not allowed');
+  }
+
   res.json({
     status: 200,
     message: `Successfully found contact with id ${contactId}!`,
@@ -51,63 +50,46 @@ export const getContactByIdController = async (req, res) => {
   });
 };
 
-export const createContactController = async (req, res, next) => {
-  try {
-    await createContactSchema.validateAsync(req.body);
+export const createContactController = async (req, res) => {
+  const contact = { ...req.body, userId: req.user.id };
 
-    const contact = await createContact(req.body);
-
-    res.status(201).json({
-      status: 201,
-      message: 'Successfully created a contact!',
-      data: contact,
-    });
-  } catch (error) {
-    console.error('Error creating contact:', error);
-
-    if (error.isJoi) {
-      return res.status(400).json({
-        message: 'Validation error',
-        errors: error.details.map((detail) => detail.message),
-      });
-    }
-
-    next(createHttpError(500, 'Failed to create contact', { cause: error }));
+  if (contact.userId.toString() !== req.user.id.toString()) {
+    throw new createHttpError.Forbidden('Contact is not allowed');
   }
+
+  res.json({
+    status: 201,
+    message: `Successfully created a contact!`,
+    data: contact,
+  });
 };
 
-export const patchContactController = async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
-    const updatedContact = await updateContact(contactId, req.body);
+export const patchContactController = async (req, res) => {
+  const { contactId } = req.params;
+  const updatedContact = await updateContact(contactId, req.body);
 
-    if (!updatedContact) {
-      throw createHttpError(404, 'Contact not found');
-    }
-
-    res.json({
-      status: 200,
-      message: 'Successfully patched a contact!',
-      data: updatedContact,
-    });
-  } catch (error) {
-    console.error('Error updating contact:', error);
-    next(createHttpError(500, 'Failed to update contact', { cause: error }));
+  if (!updatedContact) {
+    throw createHttpError(404, 'Contact not found');
   }
+
+  res.json({
+    status: 200,
+    message: `Successfully patched a contact!`,
+    data: updatedContact,
+  });
 };
 
-export const deleteContactController = async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
-    const contact = await deleteContact(contactId);
+export const deleteContactController = async (req, res) => {
+  const { contactId } = req.params;
+  const contact = await deleteContact(contactId);
 
-    if (!contact) {
-      throw createHttpError(404, 'Contact not found');
-    }
-
-    res.status(204).send();
-  } catch (error) {
-    console.error('Error deleting contact:', error);
-    next(createHttpError(500, 'Failed to delete contact', { cause: error }));
+  if (!contact) {
+    throw createHttpError(404, 'Contact not found');
   }
+
+  if (contact.userId.toString() !== req.user.id.toString()) {
+    throw new createHttpError.Forbidden('Contact is not allowed');
+  }
+
+  res.status(204).send();
 };
