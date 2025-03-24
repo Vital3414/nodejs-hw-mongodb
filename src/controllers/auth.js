@@ -31,7 +31,7 @@ export async function loginController(req, res) {
   res.status(200).json({
     status: 200,
     message: 'Successfully logged in an user!',
-    data: { accessToken: session.accsessToken },
+    data: { accessToken: session.accessToken },
   });
 }
 
@@ -66,6 +66,6 @@ export async function refreshController(req, res) {
   res.status(200).json({
     status: 200,
     message: 'Successfully logged in an user!',
-    data: { accessToken: session.accsessToken },
+    data: { accessToken: session.accessToken },
   });
 }

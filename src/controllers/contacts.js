@@ -51,7 +51,7 @@ export const getContactByIdController = async (req, res) => {
 };
 
 export const createContactController = async (req, res) => {
-  const contact = { ...req.body, userId: req.user.id };
+  const contact = await createContact({ ...req.body, userId: req.user.id });
 
   if (contact.userId.toString() !== req.user.id.toString()) {
     throw new createHttpError.Forbidden('Contact is not allowed');

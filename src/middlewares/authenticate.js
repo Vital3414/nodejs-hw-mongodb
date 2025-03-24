@@ -4,16 +4,16 @@ import { User } from '../db/models/user.js';
 import { Session } from '../db/models/session.js';
 
 export async function authenticate(req, res, next) {
-  const { autorization } = req.headers;
+  const { authorization } = req.headers;
 
-  if (typeof autorization !== 'string') {
+  if (typeof authorization !== 'string') {
     return next(createHttpError.Unauthorized('Access token expired'));
   }
 
-  const [bearer, accessToken] = autorization.split(' ', 2);
+  const [bearer, accessToken] = authorization.split(' ', 2);
 
   if (bearer !== 'Bearer' || typeof accessToken !== 'string') {
-    return next(createHttpError.Unauthorized('Access token expired'));
+    return next(createHttpError.Unauthorized('Access token expireded'));
   }
 
   const session = await Session.findOne({ accessToken });
@@ -23,7 +23,7 @@ export async function authenticate(req, res, next) {
   }
 
   if (session.accessTokenValidUntil < new Date()) {
-    return next(createHttpError.Unauthorized('Access token expired'));
+    return next(createHttpError.Unauthorized('Access token expire'));
   }
 
   const user = await User.findById(session.userId);

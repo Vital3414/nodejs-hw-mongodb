@@ -35,7 +35,7 @@ export async function loginUser(email, password) {
 
   return Session.create({
     userId: user._id,
-    accsessToken: crypto.randomBytes(30).toString('base64'),
+    accessToken: crypto.randomBytes(30).toString('base64'),
     refreshToken: crypto.randomBytes(30).toString('base64'),
     accessTokenValidUntil: new Date(Date.now() + 10 * 60 * 1000),
     refreshTokenValidUntil: new Date(Date.now() + 720 * 60 * 60 * 1000),
@@ -69,7 +69,7 @@ export async function refreshSession(sessionId, refreshToken) {
 
   return Session.create({
     userId: currentSession.userId,
-    accsessToken: crypto.randomBytes(30).toString('base64'),
+    accessToken: crypto.randomBytes(30).toString('base64'),
     refreshToken: crypto.randomBytes(30).toString('base64'),
     accessTokenValidUntil: new Date(Date.now() + 10 * 60 * 1000),
     refreshTokenValidUntil: new Date(Date.now() + 720 * 60 * 60 * 1000),

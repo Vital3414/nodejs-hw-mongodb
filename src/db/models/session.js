@@ -7,7 +7,7 @@ const sessionSchema = new mongoose.Schema(
       ref: 'users',
       required: true,
     },
-    accsessToken: {
+    accessToken: {
       type: String,
       required: true,
     },
