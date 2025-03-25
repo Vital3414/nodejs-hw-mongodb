@@ -11,7 +11,6 @@ export const getContacts = async ({
   filter = {},
   userId,
 }) => {
-  try {
     const limit = perPage;
     const skip = (page - 1) * perPage;
 
@@ -47,11 +46,7 @@ export const getContacts = async ({
       data: contacts,
       ...paginationData,
     };
-  } catch (error) {
-    console.error('Error in getContacts:', error);
-    throw createHttpError(500, 'Failed to fetch contacts');
-  }
-};
+  };
 
 export const getContactById = async (contactId) => {
   return await ContactsCollection.findById(contactId);
