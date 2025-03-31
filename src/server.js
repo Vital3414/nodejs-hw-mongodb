@@ -8,6 +8,7 @@ import { errorHandler } from './middlewares/errorHandler.js';
 import authRoutes from './routers/auth.js';
 import cookieParser from 'cookie-parser';
 import { authenticate } from './middlewares/authenticate.js';
+import { UPLOAD_DIR } from './constants/index.js';
 
 const PORT = Number(getEnvVar('PORT', '8080'));
 
@@ -28,6 +29,7 @@ async function setupServer() {
   app.use('/contacts', authenticate, Router);
   app.use('*', notFoundHandler);
   app.use(errorHandler);
+  app.use('/uploads', express.static(UPLOAD_DIR));
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
