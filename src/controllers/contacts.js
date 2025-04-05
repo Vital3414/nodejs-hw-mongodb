@@ -54,15 +54,24 @@ export const getContactByIdController = async (req, res) => {
 };
 
 export const createContactController = async (req, res) => {
-  const contact = await createContact({ ...req.body, userId: req.user.id });
+  const { _id: userId } = req.user;
+  const photo = req.file;
 
-  if (contact.userId.toString() !== req.user.id.toString()) {
-    throw new createHttpError.Forbidden('Contact is not allowed');
+  let photoUrl;
+
+  if (photo) {
+    if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
   }
 
-  res.json({
+  const contact = await createContact({ ...req.body, userId, photo: photoUrl });
+
+  res.status(201).json({
     status: 201,
-    message: `Successfully created a contact!`,
+    message: 'Successfully created a contact!',
     data: contact,
   });
 };
