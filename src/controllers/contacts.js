@@ -54,7 +54,7 @@ export const getContactByIdController = async (req, res) => {
 };
 
 export const createContactController = async (req, res) => {
-  const { _id: userId } = req.user;
+  const { id: userId } = req.user;
   const photo = req.file;
 
   let photoUrl;
@@ -78,7 +78,7 @@ export const createContactController = async (req, res) => {
 
 export const patchContactController = async (req, res) => {
   const { contactId } = req.params;
-  const { _id: userId } = req.user;
+  const { id: userId } = req.user;
   const photo = req.file;
 
   let photoUrl;
