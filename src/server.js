@@ -9,6 +9,7 @@ import authRoutes from './routers/auth.js';
 import cookieParser from 'cookie-parser';
 import { authenticate } from './middlewares/authenticate.js';
 import { UPLOAD_DIR } from './constants/index.js';
+import { swaggerDocs } from './middlewares/swaggerDocs.js';
 
 const PORT = Number(getEnvVar('PORT', '8080'));
 
@@ -30,6 +31,8 @@ async function setupServer() {
   app.use('*', notFoundHandler);
   app.use(errorHandler);
   app.use('/uploads', express.static(UPLOAD_DIR));
+
+  app.use('/api-docs', swaggerDocs());
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
